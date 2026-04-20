@@ -188,6 +188,12 @@ pub static COMMANDS: std::sync::LazyLock<std::collections::HashMap<&'static str,
     m.insert("codim", Command::TextOperator("codim", false));
     m.insert("coker", Command::TextOperator("coker", false));
     m.insert("Char", Command::TextOperator("Char", false));
+    m.insert("varinjlim", Command::TextOperator("lim", true));
+    m.insert("varprojlim", Command::TextOperator("lim", true));
+    m.insert("injlim", Command::TextOperator("inj,lim", true));
+    m.insert("projlim", Command::TextOperator("proj,lim", true));
+    m.insert("varlimsup", Command::TextOperator("lim", true));
+    m.insert("varliminf", Command::TextOperator("lim", true));
     m
 });
 

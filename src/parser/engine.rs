@@ -406,6 +406,8 @@ pub fn parse(input: &str) -> Result<Vec<ParseNode>> {
 fn codepoint_atom_type(codepoint: char) -> Option<AtomType> {
     Some(match codepoint {
              'a'..='z' | 'A'..='Z' | '0'..='9' | 'Α'..='Ω' | 'α'..='ω' => AtomType::Alpha,
+             // Cyrillic (for \text{Ш} etc.)
+             '\u{0400}'..='\u{04FF}' => AtomType::Alpha,
              '*' | '+' | '-' => AtomType::Binary,
              '[' | '(' => AtomType::Open,
              ']' | ')' | '?' | '!' => AtomType::Close,
@@ -413,6 +415,8 @@ fn codepoint_atom_type(codepoint: char) -> Option<AtomType> {
              ',' | ';' => AtomType::Punctuation,
              '|' => AtomType::Fence,
              '/' | '@' | '.' | '"' => AtomType::Alpha,
+             // General Unicode letters/symbols fallback -- treat as Alpha
+             c if c.is_alphabetic() => AtomType::Alpha,
              _ => return None,
          })
 }
