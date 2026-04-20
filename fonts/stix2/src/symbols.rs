@@ -5071,6 +5071,8 @@ pub static SYMBOLS: std::sync::LazyLock<std::collections::HashMap<&'static str, 
     m.insert("mapsto", Symbol { unicode: 0x21A6, atom_type: AtomType::Relation });         // ↦
     m.insert("longmapsto", Symbol { unicode: 0x27FC, atom_type: AtomType::Relation });     // ⟼
     m.insert("upharpoonright", Symbol { unicode: 0x21BE, atom_type: AtomType::Relation }); // ↾
+    m.insert("blacksquare", Symbol { unicode: 0x220E, atom_type: AtomType::Ordinal });     // ∎ (QED / end of proof)
+    m.insert("qed", Symbol { unicode: 0x220E, atom_type: AtomType::Ordinal });             // ∎ (alias for blacksquare)
     m
 });
 
