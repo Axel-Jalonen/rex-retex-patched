@@ -1,0 +1,9 @@
+[package]
+name = "stix2"
+version = "0.1.0"
+authors = ["cbreeden <github@u.breeden.cc>"]
+edition = "2021"
+
+[dependencies]
+fp = { git = "https://github.com/ReTeX/fp.git" }
+font_types = { path = "../types" }
