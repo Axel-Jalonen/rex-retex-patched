@@ -139,14 +139,16 @@ pub fn state_change(lex: &mut Lexer, style: Style) -> Result<Option<Vec<ParseNod
     use crate::font::Family;
     if let Token::Command(cmd) = lex.current {
         let new_style = match cmd {
-            "mathbf" => style.with_bold(),
-            "mathit" => style.with_italics(),
-            "mathrm" => style.with_family(Family::Roman),
+            "mathbf" | "textbf" | "boldsymbol" | "bm" => style.with_bold(),
+            "mathit" | "textit" => style.with_italics(),
+            "mathrm" | "text" | "textrm" | "textnormal" | "mathnormal" => {
+                style.with_family(Family::Roman)
+            }
             "mathscr" => style.with_family(Family::Script),
             "mathfrak" => style.with_family(Family::Fraktur),
             "mathbb" => style.with_family(Family::Blackboard),
-            "mathsf" => style.with_family(Family::SansSerif),
-            "mathtt" => style.with_family(Family::Monospace),
+            "mathsf" | "textsf" => style.with_family(Family::SansSerif),
+            "mathtt" | "texttt" => style.with_family(Family::Monospace),
             "mathcal" => style.with_family(Family::Script),
             _ => return Ok(None),
         };

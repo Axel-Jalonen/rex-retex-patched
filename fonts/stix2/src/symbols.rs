@@ -5044,6 +5044,33 @@ pub static SYMBOLS: std::sync::LazyLock<std::collections::HashMap<&'static str, 
 
     // Misc symbols shim
     "|", Symbol { unicode: 0x2016, atom_type: AtomType::Fence });
+
+    // Common LaTeX aliases not in the unicode-math table but frequently
+    // emitted by LLMs and standard LaTeX packages.
+    m.insert("neq", Symbol { unicode: 0x2260, atom_type: AtomType::Relation });      // ≠  (alias for \ne)
+    m.insert("implies", Symbol { unicode: 0x27F9, atom_type: AtomType::Relation });   // ⟹  (alias for \Longrightarrow)
+    m.insert("iff", Symbol { unicode: 0x27FA, atom_type: AtomType::Relation });       // ⟺  (alias for \Longleftrightarrow)
+    m.insert("dots", Symbol { unicode: 0x2026, atom_type: AtomType::Inner });         // …  (alias for \ldots)
+    m.insert("ldots", Symbol { unicode: 0x2026, atom_type: AtomType::Inner });        // …
+    m.insert("lVert", Symbol { unicode: 0x2016, atom_type: AtomType::Open });         // ‖  (left double bar)
+    m.insert("rVert", Symbol { unicode: 0x2016, atom_type: AtomType::Close });        // ‖  (right double bar)
+    m.insert("middle", Symbol { unicode: 0x2223, atom_type: AtomType::Fence });       // ∣
+    m.insert("nmid", Symbol { unicode: 0x2224, atom_type: AtomType::Relation });      // ∤
+    m.insert("nparallel", Symbol { unicode: 0x2226, atom_type: AtomType::Relation }); // ∦
+    m.insert("coloneqq", Symbol { unicode: 0x2254, atom_type: AtomType::Relation });  // ≔
+    m.insert("eqqcolon", Symbol { unicode: 0x2255, atom_type: AtomType::Relation });  // ≕
+    m.insert("varphi", Symbol { unicode: 0x03C6, atom_type: AtomType::Alpha });       // φ
+    m.insert("varepsilon", Symbol { unicode: 0x03B5, atom_type: AtomType::Alpha });   // ε
+    m.insert("varnothing", Symbol { unicode: 0x2205, atom_type: AtomType::Ordinal }); // ∅
+    m.insert("emptyset", Symbol { unicode: 0x2205, atom_type: AtomType::Ordinal });   // ∅
+    m.insert("hookrightarrow", Symbol { unicode: 0x21AA, atom_type: AtomType::Relation });  // ↪
+    m.insert("hookleftarrow", Symbol { unicode: 0x21A9, atom_type: AtomType::Relation });   // ↩
+    m.insert("twoheadrightarrow", Symbol { unicode: 0x21A0, atom_type: AtomType::Relation }); // ↠
+    m.insert("xrightarrow", Symbol { unicode: 0x27F6, atom_type: AtomType::Relation });   // ⟶
+    m.insert("xleftarrow", Symbol { unicode: 0x27F5, atom_type: AtomType::Relation });    // ⟵
+    m.insert("mapsto", Symbol { unicode: 0x21A6, atom_type: AtomType::Relation });         // ↦
+    m.insert("longmapsto", Symbol { unicode: 0x27FC, atom_type: AtomType::Relation });     // ⟼
+    m.insert("upharpoonright", Symbol { unicode: 0x21BE, atom_type: AtomType::Relation }); // ↾
     m
 });
 

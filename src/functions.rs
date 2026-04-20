@@ -41,6 +41,7 @@ pub enum Command {
     AtomChange(AtomType),
     TextOperator(&'static str, bool),
     SubStack(AtomType),
+    OperatorName,
 }
 
 #[cfg_attr(rustfmt, rustfmt_skip)]
@@ -60,6 +61,7 @@ impl Command {
             AtomChange(a)        => atom_change(lex, local, a),
             TextOperator(a, b)   => text_operator(lex, local, a, b),
             SubStack(a)          => substack(lex, local, a),
+            OperatorName         => operatorname(lex, local),
         }
     }
 }
@@ -145,6 +147,47 @@ pub static COMMANDS: std::sync::LazyLock<std::collections::HashMap<&'static str,
     m.insert("Ker", Command::TextOperator("Ker", false));
     m.insert("ln", Command::TextOperator("ln", false));
     m.insert("log", Command::TextOperator("log", false));
+
+    // \operatorname{...} - dynamic operator name
+    m.insert("operatorname", Command::OperatorName);
+    m.insert("operatorname*", Command::OperatorName);
+
+    // Additional common operators LLMs like to emit
+    m.insert("sgn", Command::TextOperator("sgn", false));
+    m.insert("Tr", Command::TextOperator("Tr", false));
+    m.insert("tr", Command::TextOperator("tr", false));
+    m.insert("rank", Command::TextOperator("rank", false));
+    m.insert("Rank", Command::TextOperator("Rank", false));
+    m.insert("diag", Command::TextOperator("diag", false));
+    m.insert("lcm", Command::TextOperator("lcm", true));
+    m.insert("Sel", Command::TextOperator("Sel", false));
+    m.insert("Gal", Command::TextOperator("Gal", false));
+    m.insert("Aut", Command::TextOperator("Aut", false));
+    m.insert("End", Command::TextOperator("End", false));
+    m.insert("Ext", Command::TextOperator("Ext", false));
+    m.insert("Tor", Command::TextOperator("Tor", false));
+    m.insert("GL", Command::TextOperator("GL", false));
+    m.insert("SL", Command::TextOperator("SL", false));
+    m.insert("SO", Command::TextOperator("SO", false));
+    m.insert("SU", Command::TextOperator("SU", false));
+    m.insert("Spec", Command::TextOperator("Spec", false));
+    m.insert("Proj", Command::TextOperator("Proj", false));
+    m.insert("Hess", Command::TextOperator("Hess", false));
+    m.insert("Res", Command::TextOperator("Res", false));
+    m.insert("Re", Command::TextOperator("Re", false));
+    m.insert("Im", Command::TextOperator("Im", false));
+    m.insert("ord", Command::TextOperator("ord", false));
+    m.insert("mod", Command::TextOperator("mod", false));
+    m.insert("Var", Command::TextOperator("Var", false));
+    m.insert("Cov", Command::TextOperator("Cov", false));
+    m.insert("Corr", Command::TextOperator("Corr", false));
+    m.insert("argmax", Command::TextOperator("arg,max", true));
+    m.insert("argmin", Command::TextOperator("arg,min", true));
+    m.insert("softmax", Command::TextOperator("softmax", false));
+    m.insert("Span", Command::TextOperator("Span", false));
+    m.insert("codim", Command::TextOperator("codim", false));
+    m.insert("coker", Command::TextOperator("coker", false));
+    m.insert("Char", Command::TextOperator("Char", false));
     m
 });
 
@@ -274,4 +317,55 @@ fn substack(lex: &mut Lexer, local: Style, atom_type: AtomType) -> Result<ParseN
 
     lex.next();
     Ok(ParseNode::Stack(Stack { atom_type, lines }))
+}
+
+/// `\operatorname{Name}` - renders `Name` as an upright operator with proper spacing.
+/// This reads the braced argument as individual characters and renders them in Roman style,
+/// just like `\sin`, `\cos`, etc. but with a dynamic name.
+fn operatorname(lex: &mut Lexer, _local: Style) -> Result<ParseNode> {
+    // Expect a `{`
+    if lex.current != Token::Symbol('{') {
+        return Err(Error::ExpectedOpenGroup);
+    }
+    lex.next();
+
+    // Read characters until `}`
+    let mut name = String::new();
+    loop {
+        match lex.current {
+            Token::Symbol('}') => {
+                lex.next();
+                break;
+            }
+            Token::Symbol(c) => {
+                name.push(c);
+                lex.next();
+            }
+            Token::Command(cmd) => {
+                // Some people write \operatorname{\mathcal{F}} etc. - just grab the text
+                name.push_str(cmd);
+                lex.next();
+            }
+            Token::EOF => return Err(Error::NoClosingBracket),
+            _ => {
+                lex.next();
+            }
+        }
+    }
+
+    let at = AtomType::Operator(false);
+    let mut inner = Vec::with_capacity(name.len());
+    for c in name.chars() {
+        inner.push(ParseNode::Symbol(Symbol {
+            unicode: style_symbol(
+                c as u32,
+                Style::default()
+                    .with_family(Family::Roman)
+                    .with_weight(Weight::None),
+            ),
+            atom_type: AtomType::Ordinal,
+        }));
+    }
+
+    Ok(ParseNode::AtomChange(AtomChange { at, inner }))
 }
